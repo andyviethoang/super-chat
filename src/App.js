@@ -1,10 +1,13 @@
 import "./App.css";
-import firebase from "firebase/app";
-import "firebase/firestore";
-import "firebase/auth";
-import { getAnalytics } from "firebase/analytics";
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { useCollectionData } from "react-firebase-hooks/firestore";
+import { SignIn } from "./components/organisms/SignIn";
+import { ChatRoom } from "./components/organisms/ChatRoom";
+import { getAuth } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCXIXNDnHTo28ftN4PXepPV8crDByFjm6A",
@@ -18,17 +21,15 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const firestore = firebase.firestore();
-// const analytics = getAnalytics(app);
-
-const [user] = useAuthState(auth);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
 function App() {
+  const [user] = useAuthState(auth);
+
   return (
     <div className="App">
-      <header className="App-header"></header>
-      <section>{user ? <ChatRoom /> : <SignIn />}</section>
+      <section>{user ? <ChatRoom db={db} /> : <SignIn auth={auth} />}</section>
     </div>
   );
 }
